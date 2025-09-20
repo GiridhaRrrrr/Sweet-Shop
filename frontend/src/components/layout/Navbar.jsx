@@ -51,6 +51,11 @@ const Navbar = () => {
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                   {user?.username}
                 </span>
+                {user?.role === 'admin' && (
+                  <span className="text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-2 py-1 rounded">
+                    Admin
+                  </span>
+                )}
               </div>
               
               <motion.button

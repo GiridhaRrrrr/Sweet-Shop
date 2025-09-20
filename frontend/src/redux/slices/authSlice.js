@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../../services/authService';
-import { jwtDecode } from 'jwt-decode'; // Changed from default import to named import
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -24,7 +23,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: user || null,
-    isAdmin: user ? jwtDecode(user.token).isAdmin || false : false,
+    isAdmin: user ? (user.role === 'admin') : false,
     isLoading: false,
     error: null,
   },
@@ -47,7 +46,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        state.isAdmin = jwtDecode(action.payload.token).isAdmin || false;
+        state.isAdmin = action.payload.role === 'admin'; 
         localStorage.setItem('user', JSON.stringify(action.payload));
       })
       .addCase(login.rejected, (state, action) => {
@@ -61,7 +60,7 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        state.isAdmin = false;
+        state.isAdmin = action.payload.role === 'admin';
         localStorage.setItem('user', JSON.stringify(action.payload));
       })
       .addCase(register.rejected, (state, action) => {
