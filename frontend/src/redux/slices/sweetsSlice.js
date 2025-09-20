@@ -61,6 +61,14 @@ const sweetsSlice = createSlice({
       category: '',
       minPrice: '',
       maxPrice: ''
+    },
+    // Add operation-specific loading states
+    operationLoading: {
+      add: false,
+      update: {},
+      delete: {},
+      purchase: {},
+      restock: {}
     }
   },
   reducers: {
@@ -80,6 +88,7 @@ const sweetsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Fetch sweets
       .addCase(fetchSweets.pending, (state) => {
         state.isLoading = true;
       })
@@ -92,34 +101,79 @@ const sweetsSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       })
+      
+      // Add sweet
+      .addCase(addSweet.pending, (state) => {
+        state.operationLoading.add = true;
+      })
       .addCase(addSweet.fulfilled, (state, action) => {
+        state.operationLoading.add = false;
         state.items.push(action.payload);
         state.filteredItems = filterSweets(state.items, state.searchQuery, state.filters);
       })
+      .addCase(addSweet.rejected, (state) => {
+        state.operationLoading.add = false;
+      })
+      
+      // Update sweet
+      .addCase(updateSweet.pending, (state, action) => {
+        state.operationLoading.update[action.meta.arg.id] = true;
+      })
       .addCase(updateSweet.fulfilled, (state, action) => {
+        state.operationLoading.update[action.payload._id] = false;
         const index = state.items.findIndex(item => item._id === action.payload._id);
         if (index !== -1) {
           state.items[index] = action.payload;
           state.filteredItems = filterSweets(state.items, state.searchQuery, state.filters);
         }
       })
+      .addCase(updateSweet.rejected, (state, action) => {
+        state.operationLoading.update[action.meta.arg.id] = false;
+      })
+      
+      // Delete sweet
+      .addCase(deleteSweet.pending, (state, action) => {
+        state.operationLoading.delete[action.meta.arg] = true;
+      })
       .addCase(deleteSweet.fulfilled, (state, action) => {
+        state.operationLoading.delete[action.payload] = false;
         state.items = state.items.filter(item => item._id !== action.payload);
         state.filteredItems = filterSweets(state.items, state.searchQuery, state.filters);
       })
+      .addCase(deleteSweet.rejected, (state, action) => {
+        state.operationLoading.delete[action.meta.arg] = false;
+      })
+      
+      // Purchase sweet
+      .addCase(purchaseSweet.pending, (state, action) => {
+        state.operationLoading.purchase[action.meta.arg] = true;
+      })
       .addCase(purchaseSweet.fulfilled, (state, action) => {
+        state.operationLoading.purchase[action.payload._id] = false;
         const index = state.items.findIndex(item => item._id === action.payload._id);
         if (index !== -1) {
           state.items[index] = action.payload;
           state.filteredItems = filterSweets(state.items, state.searchQuery, state.filters);
         }
       })
+      .addCase(purchaseSweet.rejected, (state, action) => {
+        state.operationLoading.purchase[action.meta.arg] = false;
+      })
+      
+      // Restock sweet
+      .addCase(restockSweet.pending, (state, action) => {
+        state.operationLoading.restock[action.meta.arg.id] = true;
+      })
       .addCase(restockSweet.fulfilled, (state, action) => {
+        state.operationLoading.restock[action.payload._id] = false;
         const index = state.items.findIndex(item => item._id === action.payload._id);
         if (index !== -1) {
           state.items[index] = action.payload;
           state.filteredItems = filterSweets(state.items, state.searchQuery, state.filters);
         }
+      })
+      .addCase(restockSweet.rejected, (state, action) => {
+        state.operationLoading.restock[action.meta.arg.id] = false;
       });
   },
 });

@@ -1,13 +1,16 @@
+// src/components/sweets/RestockModal.jsx
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiPackage } from 'react-icons/fi';
+import { FiPackage, FiLoader } from 'react-icons/fi';
 import { restockSweet } from '../../redux/slices/sweetsSlice';
 import toast from 'react-hot-toast';
 
 const RestockModal = ({ sweet, onClose }) => {
   const dispatch = useDispatch();
+  const isRestocking = useSelector(state => state.sweets.operationLoading.restock[sweet._id]);
   const [amount, setAmount] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleRestock = async () => {
     if (!amount || parseInt(amount) <= 0) {
@@ -15,6 +18,7 @@ const RestockModal = ({ sweet, onClose }) => {
       return;
     }
 
+    setIsProcessing(true);
     try {
       await dispatch(restockSweet({ 
         id: sweet._id, 
@@ -24,6 +28,7 @@ const RestockModal = ({ sweet, onClose }) => {
       onClose();
     } catch (error) {
       toast.error('Restock failed');
+      setIsProcessing(false);
     }
   };
 
@@ -39,12 +44,16 @@ const RestockModal = ({ sweet, onClose }) => {
           <div className="p-6">
             <div className="flex items-center justify-center mb-4">
               <div className="bg-green-100 dark:bg-green-900/20 p-3 rounded-full">
-                <FiPackage className="text-3xl text-green-600 dark:text-green-400" />
+                {isProcessing ? (
+                  <FiLoader className="text-3xl text-green-600 dark:text-green-400 animate-spin" />
+                ) : (
+                  <FiPackage className="text-3xl text-green-600 dark:text-green-400" />
+                )}
               </div>
             </div>
 
             <h3 className="text-xl font-semibold text-gray-800 dark:text-white text-center mb-2">
-              Restock Sweet
+              {isProcessing ? 'Processing Restock...' : 'Restock Sweet'}
             </h3>
             
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
@@ -67,22 +76,37 @@ const RestockModal = ({ sweet, onClose }) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="Enter quantity"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                disabled={isProcessing}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               />
+              {amount && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  New stock will be: {sweet.quantity + parseInt(amount || 0)}
+                </p>
+              )}
             </div>
 
             <div className="flex justify-center space-x-3">
               <button
                 onClick={onClose}
-                className="px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                disabled={isProcessing}
+                className="px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 onClick={handleRestock}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                disabled={isProcessing || !amount || parseInt(amount) <= 0}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                Restock
+                {isProcessing ? (
+                  <>
+                    <FiLoader className="animate-spin" />
+                    <span>Restocking...</span>
+                  </>
+                ) : (
+                  <span>Restock</span>
+                )}
               </button>
             </div>
           </div>

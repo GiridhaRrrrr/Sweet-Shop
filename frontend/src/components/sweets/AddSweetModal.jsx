@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiLoader } from 'react-icons/fi';
 import { addSweet } from '../../redux/slices/sweetsSlice';
 import toast from 'react-hot-toast';
 
 const AddSweetModal = ({ onClose }) => {
   const dispatch = useDispatch();
+  const isAdding = useSelector(state => state.sweets.operationLoading.add);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -16,6 +18,7 @@ const AddSweetModal = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsProcessing(true);
     try {
       await dispatch(addSweet({
         ...formData,
@@ -26,6 +29,7 @@ const AddSweetModal = ({ onClose }) => {
       onClose();
     } catch (error) {
       toast.error('Failed to add sweet');
+      setIsProcessing(false);
     }
   };
 
@@ -48,7 +52,8 @@ const AddSweetModal = ({ onClose }) => {
             </h3>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              disabled={isProcessing}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FiX className="text-xl" />
             </button>
@@ -65,7 +70,8 @@ const AddSweetModal = ({ onClose }) => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                disabled={isProcessing}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -78,9 +84,11 @@ const AddSweetModal = ({ onClose }) => {
                 value={formData.category}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                disabled={isProcessing}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select a category</option>
+                <option value="Sweet">Sweet</option>
                 <option value="Cake">Cake</option>
                 <option value="Candy">Candy</option>
                 <option value="Chocolate">Chocolate</option>
@@ -102,7 +110,8 @@ const AddSweetModal = ({ onClose }) => {
                   onChange={handleChange}
                   step="0.01"
                   required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  disabled={isProcessing}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -116,7 +125,8 @@ const AddSweetModal = ({ onClose }) => {
                   value={formData.quantity}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  disabled={isProcessing}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -125,15 +135,24 @@ const AddSweetModal = ({ onClose }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                disabled={isProcessing}
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                disabled={isProcessing}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                Add Sweet
+                {isProcessing ? (
+                  <>
+                    <FiLoader className="animate-spin" />
+                    <span>Adding...</span>
+                  </>
+                ) : (
+                  <span>Add Sweet</span>
+                )}
               </button>
             </div>
           </form>
