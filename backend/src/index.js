@@ -13,6 +13,7 @@ app.use(express.json());
 
 const allowedOrigins = [
   "http://localhost:3000",
+  "https://sweet-shop-dusky.vercel.app",
 ];
 
 const corsOptions = {
