@@ -135,4 +135,4 @@ My Reflection on AI Usage:
 
 Leveraging AI in this project felt like working with a highly efficient junior developer. It allowed me to offload the time-consuming aspects of boilerplate and routine code generation, freeing me up to focus on higher-level architectural decisions, the TDD process, and the overall user experience. This project demonstrates my ability to effectively lead a development process that responsibly and transparently integrates modern AI tools to build a robust, professional, full-stack application.
 
-here is the deployed link:- 
+here is the deployed link:-  https://sweet-shop-dusky.vercel.app/
