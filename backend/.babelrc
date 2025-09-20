@@ -1,0 +1,20 @@
+// #learning --> the TDD and the tools required for them!
+// This file tells Babel how to translate our modern JavaScript (ES6+) into an older version that Node.js and Jest are guaranteed to understand, so our code doesn't break.
+
+//small Note:- Jest is like the test runner that picks the test files (find files named *.test.js) from your code bases and runes it.
+// while Supertest is a library that allows you to make HTTP requests to your API endpoints from within your Jest tests. It's the tool that "pretends" to be a user or a frontend application, sending a GET or POST request to your server and capturing the response.
+//based on the response of the supertest, A CI/CD tool (like GitHub Actions, Jenkins, or GitLab CI) is the system that automatically runs your tests when someone tries to merge code, if the test cases of supertest fails.It sees that your Jest/Supertest tests failed and then follows its rules, which are typically to block or "discard" the merge.
+
+
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ]
+  ]
+}
