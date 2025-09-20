@@ -1,4 +1,3 @@
-// src/services/sweetsService.js
 import api from './api';
 
 const sweetsService = {

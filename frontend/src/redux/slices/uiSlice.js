@@ -1,4 +1,3 @@
-// src/redux/slices/uiSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const uiSlice = createSlice({

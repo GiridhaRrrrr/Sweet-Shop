@@ -1,4 +1,3 @@
-// src/redux/slices/sweetsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import sweetsService from '../../services/sweetsService';
 
